@@ -80,7 +80,7 @@ declare namespace bigDecimal {
 
 /** Host interface for managing data sources */
 declare namespace dataSource {
-  function create(name: string, params: Array<string>): void
+  function create(name: string, params: Array<string>): boolean
 }
 
 /**
@@ -1005,7 +1005,7 @@ export class DataSourceTemplate {
    * given name, using the parameter strings to configure the new
    * data source.
    */
-  static create(name: string, params: Array<string>): void {
-    dataSource.create(name, params)
+  static create(name: string, params: Array<string>): boolean {
+    return dataSource.create(name, params)
   }
 }
