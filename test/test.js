@@ -9,11 +9,32 @@ fs.mkdirSync("test/temp_lib");
 fs.copyFileSync("index.ts", "test/temp_lib/index.ts");
 
 try {
-  // --noTreeShaking started causing using errors, so this only tests that
-  // things used in `test.ts` compile correctly, we should improve this.
-  if (asc.main(["test/test.ts", "--lib", "test", "--validate", "--noEmit"]) != 0) {
-    process.exitCode = 1
+    const env = {
+      memoryBase: 0,
+      tableBase: 0,
+      memory: new WebAssembly.Memory({
+        initial: 256
+      }),
+      table: new WebAssembly.Table({
+        initial: 0,
+        element: 'anyfunc'
+      })
+    }
+
+    //let imports = 
+
+  let output_path = "test/temp_out/test.wasm"
+  if (asc.main(["test/test.ts", "--lib", "test", "--validate", "-b", output_path]) != 0) {
+    throw Error("failed to compile")
   }
+  let test_wasm = new Uint8Array(fs.readFileSync(output_path))
+ 
+  WebAssembly.instantiate(test_wasm, {
+    env
+  }).then(module => {
+    module.instance.exports.test();
+  });
+
 } catch(e) {
   process.exitCode = 1
   throw e

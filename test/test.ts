@@ -1,7 +1,7 @@
 import { ByteArray } from 'temp_lib/index'
 
-// `export` so this isn't considered dead code.
-export function foo(): void {
-    let a = new ByteArray(0)
-    let b: string = a.toBase58()
+export function test(): void {
+    let byte = new ByteArray(0)
+    let base58: string = <string>byte.toBase58()
+    assert(base58 == "1")
 }
