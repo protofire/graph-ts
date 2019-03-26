@@ -225,6 +225,7 @@ export enum EthereumValueKind {
   STRING = 6,
   FIXED_ARRAY = 7,
   ARRAY = 8,
+  TUPLE = 9,
 }
 
 /**
@@ -287,6 +288,14 @@ export class EthereumValue {
       'EthereumValue is not an array.'
     )
     return changetype<Array<EthereumValue>>(this.data as u32)
+  }
+
+  toTuple(): Tuple {
+    assert(
+        this.kind == EthereumValueKind.TUPLE,
+        'EthereumValue is not a tuple.'
+    )
+    return changetype<Tuple>(this.data as u32)
   }
 
   toBooleanArray(): Array<boolean> {
@@ -428,6 +437,13 @@ export class EthereumValue {
   static fromArray(values: Array<EthereumValue>): EthereumValue {
     let token = new EthereumValue()
     token.kind = EthereumValueKind.ARRAY
+    token.data = values as u64
+    return token
+  }
+
+  static fromTuple(values: Tuple): EthereumValue {
+    let token = new EthereumValue()
+    token.kind = EthereumValueKind.TUPLE
     token.data = values as u64
     return token
   }
@@ -697,6 +713,13 @@ export class Value {
     value.kind = ValueKind.STRING
     value.data = s as u64
     return value
+  }
+}
+
+
+export class Tuple extends TypedMap<string, Value> {
+  constructor() {
+    this.entries = new Array<TypedMapEntry<string, Value>>(0)
   }
 }
 
